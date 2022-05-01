@@ -38,7 +38,14 @@ class Homepage extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
                 leading: const Icon(Icons.android),
-                title: Text('Item ${value[index]['title']}'),
+                title: Text(
+                  'Item ${value[index]['title']}',
+                  style: Theme.of(context)
+                          .textTheme
+                          .headline1
+                          ?.copyWith(color: Colors.red) ??
+                      Theme.of(context).textTheme.headline1,
+                ),
                 subtitle: Text('${value[index]['description']}'),
                 trailing: IconButton(
                   onPressed: () {
