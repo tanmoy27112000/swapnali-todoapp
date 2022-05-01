@@ -2,49 +2,53 @@
 
 import 'package:flutter/material.dart';
 
-class Homepage extends StatefulWidget {
-  const Homepage({
-    Key? key,
-  }) : super(key: key);
+class Homepage extends StatelessWidget {
+  Homepage({Key? key}) : super(key: key);
 
-  @override
-  State<Homepage> createState() => _HomepageState();
-}
-
-class _HomepageState extends State<Homepage> {
-  int todoCount = 0;
-  List<Map<String, String>> todoItems = [];
+  ValueNotifier<List<Map<String, String>>> todoItems = ValueNotifier([]);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          todoItems.add({
-            'title': 'Todo ${todoItems.length}',
-            'description': 'This is a description for todo ${todoItems.length}',
+          todoItems.value.add({
+            'title': 'Todo ${todoItems.value.length}',
+            'description':
+                'This is a description for todo ${todoItems.value.length}',
           });
-          setState(() {});
+          // ignore: invalid_use_of_visible_for_testing_member
+          todoItems.notifyListeners();
+          print(todoItems.value);
         },
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
         title: const Text('Flutter Demo'),
       ),
-      body: ListView.builder(
-        itemCount: todoItems.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            leading: const Icon(Icons.android),
-            title: Text('Item ${todoItems[index]['title']}'),
-            subtitle: Text('${todoItems[index]['description']}'),
-            trailing: IconButton(
-              onPressed: () {
-                todoItems.removeAt(index);
-                setState(() {});
-              },
-              icon: const Icon(Icons.delete),
-            ),
+      body: ValueListenableBuilder(
+        valueListenable: todoItems,
+        builder: (
+          BuildContext context,
+          List<Map<String, String>> value,
+          Widget? child,
+        ) {
+          return ListView.builder(
+            itemCount: value.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                leading: const Icon(Icons.android),
+                title: Text('Item ${value[index]['title']}'),
+                subtitle: Text('${value[index]['description']}'),
+                trailing: IconButton(
+                  onPressed: () {
+                    todoItems.value.removeAt(index);
+                    todoItems.notifyListeners();
+                  },
+                  icon: const Icon(Icons.delete),
+                ),
+              );
+            },
           );
         },
       ),
